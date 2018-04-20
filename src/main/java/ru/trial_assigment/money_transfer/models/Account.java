@@ -24,15 +24,6 @@ public class Account {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne()
-    @Where(clause = "accounts.id = ballances.account_id")
-    @WhereJoinTable(clause = "now() BETWEEN ballances.from_date AND ballances.to_date")
-    private Balance balance;
-
-    Account() {
-        // default constructor
-    }
-
     public Account(String name) throws IllegalArgumentException {
         this.setName(name);
     } 
@@ -47,12 +38,6 @@ public class Account {
     }
 
 
-    public Optional<Balance> getBalance() {
-        if (this.balance == null)
-            return Optional.empty();
-        return Optional.of(this.balance);
-    }
-    
     public void setName(String name) {
     	if (name == null) throw new IllegalArgumentException("The Name not be NULL");
         this.name = name;
@@ -77,7 +62,6 @@ public class Account {
     @Override
     public String toString() { 
         return "Id: '" + this.id +
-                "', Name: '" + this.name  +
-                "', Ballance: '(" + ((this.balance==null)?"NULL":this.balance.toString()) + ")'";
+                "', Name: '" + this.name  + "'";
     }
 }

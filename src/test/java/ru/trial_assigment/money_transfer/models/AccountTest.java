@@ -33,8 +33,7 @@ public class AccountTest {
 	@Test
 	public void testAccountToString() {
             assertThat(account1.toString(), is("Id: '"+ account1.getId() +
-            									"', Name: '" + account1.getName() +
-												"', Ballance: '(NULL)'"));
+            									"', Name: '" + account1.getName() + "'"));
 	}
 	
 	@Test
