@@ -12,6 +12,7 @@ import javax.persistence.*;
  */
 
 @Entity
+@Table(name="transactions")
 public class Transaction {
 	
 	public static enum OPERATION {
@@ -187,7 +188,7 @@ public class Transaction {
         		"Account: '(" + this.account.toString() + ")', " +
         		"Operation: '" + OPERATION.getOperation(this.operation) + "', " +
         		"Value: '" + this.value + "', " + 
-        		"Status: '" + this.status + "', " + 
+        		"Status: '" + this.status + "', " +
         		"Child Transaction: '(" + ((this.child==null)?"NULL":this.child.toString()) + ")'";
         		
     }

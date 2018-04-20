@@ -15,6 +15,7 @@ import javax.persistence.*;
  */
 
 @Entity
+@Table(name="balances")
 public class Balance {
 
     @Id
