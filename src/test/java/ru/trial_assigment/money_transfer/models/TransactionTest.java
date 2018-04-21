@@ -1,6 +1,8 @@
 package ru.trial_assigment.money_transfer.models;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import ru.trial_assigment.money_transfer.models.Transaction.OPERATION;
@@ -12,6 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 @RunWith(SpringRunner.class)
+@SpringBootTest
 public class TransactionTest {
 	private static Account account1 = new Account("test1");
 	private static Account account2 = new Account("test2");
@@ -20,9 +23,9 @@ public class TransactionTest {
 	public void testTransactionNoAccounts() {
 		try {
             Transaction.newBuilder().build();
-            fail();
+            Assert.fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("There must be at least one value for fromAccount or toAccount"));
+			Assert.assertEquals(e.getMessage(), "There must be at least one value for fromAccount or toAccount");
         }
 	}
 	
@@ -30,9 +33,9 @@ public class TransactionTest {
 	public void testTransactionValueLessZero() {
 		try {
 			Transaction.newBuilder().setToAccount(account1).setValue(-1L).build();
-            fail();
+			Assert.fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("The value can not be less than zero"));
+			Assert.assertEquals(e.getMessage(), "The value can not be less than zero");
         }
 	}
 	
@@ -41,26 +44,26 @@ public class TransactionTest {
 		//account1 = account2
 		try {
 			Transaction.newBuilder().setToAccount(account1).setFromAccount(account2).build();
-            fail();
+			Assert.fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("The fromAccount and toAccount can not be equals"));
+			Assert.assertEquals(e.getMessage(), "The fromAccount and toAccount can not be equals");
         }
 	}
 	
 	
 	@Test
 	public void testTransactionToString() {
-            assertThat(Transaction.newBuilder()
+		Assert.assertEquals(Transaction.newBuilder()
             						.setToAccount(account1)
             						.setValue(100)
             						.build()
             						.toString(),            			
-            is("Id: '0', " +
+            "Id: '0', " +
             		"Account: '(" + account1.toString() + ")', " +
             		"Operation: 'INCREASE', " +
             		"Value: '100', " + 
             		"Status: 'CREATE', " + 
-            		"Child Transaction: '(NULL)'"));
+            		"Child Transaction: '(NULL)'");
 	}
 	
 	@Test
@@ -70,24 +73,24 @@ public class TransactionTest {
 									.setValue(100)
 									.setFromAccount(account1)
 									.build();
-		assertThat(transaction1.getAccount().get(), is(account1));
-		assertThat(transaction1.getOperation(), is(OPERATION.REDUCE));
-		assertThat(transaction1.getStatus(), is(STATUS.CREATE));
-		assertThat(transaction1.getValue(), is(100L));
+		Assert.assertEquals(transaction1.getAccount().get(), account1);
+		Assert.assertEquals(transaction1.getOperation(), OPERATION.REDUCE);
+		Assert.assertEquals(transaction1.getStatus(), STATUS.CREATE);
+		Assert.assertEquals(transaction1.getValue(), 100L);
 		transaction1.setStatus(STATUS.SUCCSESS);
-		assertThat(transaction1.getStatus(), is(STATUS.SUCCSESS));
+		Assert.assertEquals(transaction1.getStatus(), STATUS.SUCCSESS);
 		
 		Transaction transaction2 = Transaction
 				.newBuilder()
 				.setValue(100)
 				.setToAccount(account2)
 				.build();
-		assertThat(transaction2.getAccount().get(), is(account2));
-		assertThat(transaction2.getOperation(), is(OPERATION.INCREASE));
-		assertThat(transaction2.getStatus(), is(STATUS.CREATE));
-		assertThat(transaction2.getValue(), is(100L));
+		Assert.assertEquals(transaction2.getAccount().get(), account2);
+		Assert.assertEquals(transaction2.getOperation(), OPERATION.INCREASE);
+		Assert.assertEquals(transaction2.getStatus(), STATUS.CREATE);
+		Assert.assertEquals(transaction2.getValue(), 100L);
 		transaction2.setStatus(STATUS.ERROR);
-		assertThat(transaction2.getStatus(), is(STATUS.ERROR));												
+		Assert.assertEquals(transaction2.getStatus(), STATUS.ERROR);
 	}
 
 }

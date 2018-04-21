@@ -2,11 +2,8 @@ package ru.trial_assigment.money_transfer.models;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.Where;
-import org.hibernate.annotations.WhereJoinTable;
 
 import javax.persistence.*;
-import java.util.Optional;
 
 /**
  * Created by kirie on 24.03.2018.
@@ -23,6 +20,10 @@ public class Account {
 
     @Column(name = "name")
     private String name;
+
+    public Account(){
+
+    }
 
     public Account(String name) throws IllegalArgumentException {
         this.setName(name);

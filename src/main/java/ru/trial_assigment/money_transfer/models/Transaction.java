@@ -2,6 +2,8 @@ package ru.trial_assigment.money_transfer.models;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.trial_assigment.money_transfer.repositories.TransactionsRepository;
 
 import java.util.Optional;
 
@@ -57,7 +59,7 @@ public class Transaction {
     @Column(name = "status_id")
     private STATUS status; //create new
 
-    @ManyToOne()
+    @OneToOne()
     @JoinColumn(name = "transaction_id")
     private Transaction child;
     
@@ -90,7 +92,7 @@ public class Transaction {
         return value;
     }
 
-    public Optional<Transaction> getChild() {        
+    public Optional<Transaction> getChild() {
         if(child == null)
     		return Optional.empty();
         return Optional.of(child);
@@ -106,17 +108,20 @@ public class Transaction {
     
     public class Builder {
     	private Optional<Account> fromAccount, toAccount;
+
     	private Builder() {
     		fromAccount = Optional.empty();
     		toAccount = Optional.empty();
     	}
+
     	public Builder  setValue(long value) throws IllegalArgumentException {
     		if (value < 0L)
     			throw new IllegalArgumentException("The value can not be less than zero");
     		Transaction.this.value = value;
     		return this;
     	}
-    	
+
+
     	public Builder setFromAccount(Account account) {
     		this.fromAccount = checkAccount(account);    		
     		return this;
@@ -131,7 +136,7 @@ public class Transaction {
     	public Transaction build() throws IllegalArgumentException {
     		Transaction.this.status = STATUS.CREATE;
     		if (fromAccount.isPresent()) {
-    			Transaction.this.operation = OPERATION.REDUCE.toBoolean();    			
+    			Transaction.this.operation = OPERATION.REDUCE.toBoolean();
     			Transaction.this.account = fromAccount.get();
     			if (toAccount.isPresent()) {
     				if(toAccount.get().equals(fromAccount.get()))
@@ -148,7 +153,7 @@ public class Transaction {
     		else {
     			throw new IllegalArgumentException("There must be at least one value for fromAccount or toAccount");
 			}
-    		return Transaction.this;    		
+    		return Transaction.this;
     	}
     	
     	private Optional<Account> checkAccount(Account account){

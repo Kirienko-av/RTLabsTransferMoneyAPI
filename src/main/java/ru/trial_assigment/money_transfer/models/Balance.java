@@ -27,7 +27,7 @@ public class Balance {
     @JoinColumn(name = "account_id")
     private Account account;
     
-    @ManyToOne()
+    @OneToOne()
     @JoinColumn(name = "transaction_id")
     private Transaction transaction;
     
@@ -41,7 +41,10 @@ public class Balance {
     @Column(name = "to_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date toDate;
-    
+
+    private Balance(){
+
+    }
 
     public Balance(Transaction transaction, Balance previousBalance, Date fromDate, Date toDate) throws IllegalArgumentException {
 		if(transaction == null || !transaction.getAccount().isPresent() || fromDate == null || toDate == null)
@@ -52,14 +55,14 @@ public class Balance {
 		this.transaction = transaction;
 		this.fromDate = fromDate;
 		this.toDate = toDate;
-		if (previousBalance == null 
+		if (previousBalance == null
 				&& (transaction.getOperation() == OPERATION.INCREASE || transaction.getValue() == 0L))
 			this.balance = transaction.getValue();
 		else if (transaction.getOperation() == OPERATION.INCREASE)
 			this.balance = previousBalance.getballance() + transaction.getValue();
-		else if(previousBalance != null 
-				&& transaction.getOperation() == OPERATION.REDUCE 
-				&& previousBalance.getballance() - transaction.getValue() >= 0L)			
+		else if(previousBalance != null
+				&& transaction.getOperation() == OPERATION.REDUCE
+				&& previousBalance.getballance() - transaction.getValue() >= 0L)
 			this.balance = previousBalance.getballance() - transaction.getValue();
 		else 
 			throw new IllegalArgumentException("The ballance can not be less than zero");			
@@ -80,7 +83,7 @@ public class Balance {
         return Optional.of(account);
     }
     
-    public Optional<Transaction> getTransaction() {        
+    public Optional<Transaction> getTransaction() {
         if(transaction == null)
     		return Optional.empty();
         return Optional.of(transaction);
