@@ -58,5 +58,10 @@ public class BalacnesReposytoryTest {
                 .findById(1L).get())
                 .iterator().next()
                 .getAccount().get().getName(), "Ivan");
+        
+        Assert.assertNotNull(balancesReposytory.findByAccount(1L));
+        Assert.assertEquals(balancesReposytory.findByAccount(1L)
+                .iterator().next()
+                .getAccount().get().getName(), "Ivan");
     }
 }

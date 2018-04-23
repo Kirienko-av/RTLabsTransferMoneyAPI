@@ -7,11 +7,14 @@ import org.springframework.data.repository.query.Param;
 import ru.trial_assigment.money_transfer.models.Account;
 import ru.trial_assigment.money_transfer.models.Balance;
 
-import java.util.List;
+import java.util.Set;
 
 public interface BalancesReposytory extends CrudRepository<Balance, Long> {
     @Query("from Balance b where b.account=:account")
-    public List<Balance> findByAccount(@Param("account") Account account);
+    public Set<Balance> findByAccount(@Param("account") Account account);
+    
+    @Query("select b from Balance b join b.account a where a.id=:account_id")
+    public Set<Balance> findByAccount(@Param("account_id") long accountId);
 
     /*@Query("select b from Balance b where b.transaction_id=:transaction_id")
     public Optional<Balance> findByTransactionId(@Param("transaction_id") Long transactionId);
