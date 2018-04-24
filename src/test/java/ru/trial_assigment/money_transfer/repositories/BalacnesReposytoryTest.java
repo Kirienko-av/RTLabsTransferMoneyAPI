@@ -26,14 +26,16 @@ public class BalacnesReposytoryTest {
     AccountsRepository accountsRepository;
     @Autowired
     TransactionsRepository transactionsRepository;
+    
+    private boolean isSetUp = false;
 
     @Before
-    public void init(){
-        accountsRepository.save(new Account("Ivan"));
-        accountsRepository.save(new Account("Petr"));
+    public void setUp(){
+    	if (isSetUp)
+    		return;
+    	accountsRepository.save(new Account("Ivan"));
         Transaction transaction = Transaction
                 .newBuilder()
-                .setFromAccount(accountsRepository.findById(2L).get())
                 .setToAccount(accountsRepository.findById(1L).get())
                 .setValue(10).build();
         if(transaction.getChild().isPresent()){
@@ -41,7 +43,7 @@ public class BalacnesReposytoryTest {
         }
         transactionsRepository.save(transaction);
         try {
-			balancesReposytory.save(new Balance(transactionsRepository.findById(1L).get(), null, new Date()));
+			balancesReposytory.save(new Balance(transaction, null, new Date()));
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -49,8 +51,10 @@ public class BalacnesReposytoryTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        isSetUp = true;
 
-    }
+    }    
+    
 
     @Test
     public void testFindById()  {
@@ -94,8 +98,7 @@ public class BalacnesReposytoryTest {
 			newTransaction = transactionsRepository.save(newTransaction);
 	        Balance newBallance = new Balance(newTransaction, actualBalance, new Date());
 			balancesReposytory.save(newBallance);
-			balancesReposytory.save(actualBalance);
-			balancesReposytory.findByAccount(1L).forEach(System.out::println);
+			balancesReposytory.save(actualBalance);			
 			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -107,5 +110,16 @@ public class BalacnesReposytoryTest {
         Assert.assertNotNull(balancesReposytory.findActualByAccount(1L,  new Date()));
         Assert.assertEquals(balancesReposytory.findActualByAccount(1L,  new Date())
         		.get().getBallance(), 110L);
+    }
+    
+    @Test
+    public void testFindByTransaction()  {
+        Assert.assertNotNull(balancesReposytory.findByTransaction(transactionsRepository.findById(1L).get()));
+        Assert.assertEquals(balancesReposytory.findByTransaction(transactionsRepository.findById(1L).get())
+        		.get().getBallance(), 10L);
+        
+        Assert.assertNotNull(balancesReposytory.findByTransaction(1L));
+        Assert.assertEquals(balancesReposytory.findByTransaction(1L)
+        		.get().getBallance(), 10L);
     }
 }

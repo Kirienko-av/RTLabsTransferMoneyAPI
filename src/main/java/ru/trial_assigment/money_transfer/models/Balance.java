@@ -73,7 +73,8 @@ public class Balance {
 		} else {
 			throw new IllegalArgumentException("The ballance can not be less than zero");	
 		}
-	}
+	}    
+   
     
     public Balance(Transaction transaction, Balance previousBalance, Date fromDate) throws IllegalArgumentException, ParseException {
 		this(transaction, previousBalance, fromDate, null);
