@@ -43,11 +43,8 @@ public class BalacnesReposytoryTest {
         }
         transactionsRepository.save(transaction);
         try {
-			balancesReposytory.save(new Balance(transaction, null, new Date()));
+			balancesReposytory.save(Balance.newBuilder(transaction).build());
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -96,14 +93,11 @@ public class BalacnesReposytoryTest {
 	                .setToAccount(accountsRepository.findById(1L).get())
 	                .setValue(100).build();
 			newTransaction = transactionsRepository.save(newTransaction);
-	        Balance newBallance = new Balance(newTransaction, actualBalance, new Date());
+	        Balance newBallance = Balance.newBuilder(newTransaction).setPreviousBalance(actualBalance).build();
 			balancesReposytory.save(newBallance);
 			balancesReposytory.save(actualBalance);			
 			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
+		}  catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
