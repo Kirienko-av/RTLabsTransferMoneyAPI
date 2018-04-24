@@ -146,21 +146,21 @@ public class Balance {
         }
 
         public Balance build() throws IllegalArgumentException {
-            if (!previousBalance.isPresent()
-                    && (Balance.this.transaction.getOperation() == OPERATION.INCREASE
-                    || Balance.this.transaction.getValue() == 0L))
-                Balance.this.balance = Balance.this.transaction.getValue();
-            else if (Balance.this.transaction.getOperation() == OPERATION.INCREASE) {
-                Balance.this.balance = this.previousBalance.get().getBallance() + Balance.this.transaction.getValue();
-                this.previousBalance.get().setToDate(new Date(Balance.this.fromDate.getTime() - 1L));
-            } else if (previousBalance.isPresent()
-                    && Balance.this.transaction.getOperation() == OPERATION.REDUCE
-                    && this.previousBalance.get().getBallance() - transaction.getValue() >= 0L) {
-                Balance.this.balance = this.previousBalance.get().getBallance() - Balance.this.transaction.getValue();
-                this.previousBalance.get().setToDate(new Date(Balance.this.fromDate.getTime() - 1L));
-            } else {
-                throw new IllegalArgumentException("The ballance can not be less than zero");
+            Balance.this.balance = this.previousBalance.isPresent()
+                                    ?this.previousBalance.get().getBallance()
+                                    :0L;
+            switch (Balance.this.transaction.getOperation()) {
+                case INCREASE:
+                    Balance.this.balance += Balance.this.transaction.getValue();
+                    break;
+                case REDUCE:
+                    Balance.this.balance -= Balance.this.transaction.getValue();
+                    break;
             }
+            if (Balance.this.balance < 0L)
+                throw new IllegalArgumentException("The ballance can not be less than zero");
+            if(this.previousBalance.isPresent())
+                this.previousBalance.get().setToDate(new Date(Balance.this.fromDate.getTime() - 1L));
             return Balance.this;
         }
     }
