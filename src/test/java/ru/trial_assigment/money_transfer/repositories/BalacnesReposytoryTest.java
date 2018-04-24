@@ -11,6 +11,7 @@ import ru.trial_assigment.money_transfer.models.Account;
 import ru.trial_assigment.money_transfer.models.Balance;
 import ru.trial_assigment.money_transfer.models.Transaction;
 
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -39,7 +40,15 @@ public class BalacnesReposytoryTest {
             transactionsRepository.save(transaction.getChild().get());
         }
         transactionsRepository.save(transaction);
-        balancesReposytory.save(new Balance(transactionsRepository.findById(1L).get(), null, new Date()));
+        try {
+			balancesReposytory.save(new Balance(transactionsRepository.findById(1L).get(), null, new Date()));
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
 
@@ -63,5 +72,40 @@ public class BalacnesReposytoryTest {
         Assert.assertEquals(balancesReposytory.findByAccount(1L)
                 .iterator().next()
                 .getAccount().get().getName(), "Ivan");
+    }
+    
+    @Test
+    public void testFindActualByAccount()  {    	
+        Assert.assertNotNull(balancesReposytory.findActualByAccount(accountsRepository.findById(1L).get(), new Date()));
+        Assert.assertEquals(balancesReposytory.findActualByAccount(accountsRepository
+                .findById(1L).get(),  new Date())
+        		.get().getBallance(), 10L);
+        
+        Assert.assertNotNull(balancesReposytory.findActualByAccount(1L,  new Date()));
+        Assert.assertEquals(balancesReposytory.findActualByAccount(1L,  new Date())
+        		.get().getBallance(), 10L);
+        
+        Balance actualBalance = balancesReposytory.findActualByAccount(1L,  new Date()).get();
+        try {
+			Transaction newTransaction = Transaction
+	                .newBuilder()
+	                .setToAccount(accountsRepository.findById(1L).get())
+	                .setValue(100).build();
+			newTransaction = transactionsRepository.save(newTransaction);
+	        Balance newBallance = new Balance(newTransaction, actualBalance, new Date());
+			balancesReposytory.save(newBallance);
+			balancesReposytory.save(actualBalance);
+			balancesReposytory.findByAccount(1L).forEach(System.out::println);
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        Assert.assertNotNull(balancesReposytory.findActualByAccount(1L,  new Date()));
+        Assert.assertEquals(balancesReposytory.findActualByAccount(1L,  new Date())
+        		.get().getBallance(), 110L);
     }
 }

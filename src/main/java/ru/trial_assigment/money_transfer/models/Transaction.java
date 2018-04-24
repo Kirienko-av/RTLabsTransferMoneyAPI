@@ -2,8 +2,6 @@ package ru.trial_assigment.money_transfer.models;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import ru.trial_assigment.money_transfer.repositories.TransactionsRepository;
 
 import java.util.Optional;
 
@@ -64,7 +62,7 @@ public class Transaction {
     private Transaction child;
     
 
-    Transaction() {
+    private Transaction() {
         // default constructor
     }   
 

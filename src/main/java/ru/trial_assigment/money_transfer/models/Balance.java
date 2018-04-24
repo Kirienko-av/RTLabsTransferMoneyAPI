@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import ru.trial_assigment.money_transfer.models.Transaction.OPERATION;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
@@ -34,42 +36,47 @@ public class Balance {
     @Column(name = "ballance")
     private long balance;
     
-    @Column(name = "from_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "from_date")    
     private Date fromDate;
     
-    @Column(name = "to_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "to_date")
     private Date toDate;
 
-    private Balance(){
+    @SuppressWarnings("unused")
+	private Balance() {
 
     }
 
-    public Balance(Transaction transaction, Balance previousBalance, Date fromDate, Date toDate) throws IllegalArgumentException {
-		if(transaction == null || !transaction.getAccount().isPresent() || fromDate == null || toDate == null)
+    public Balance(Transaction transaction, Balance previousBalance, Date fromDate, Date toDate) throws IllegalArgumentException, ParseException {
+		if(transaction == null || !transaction.getAccount().isPresent() || fromDate == null)
 			throw new IllegalArgumentException("The arguments not be null value");
 		if (previousBalance != null && !previousBalance.getAccount().get().equals(transaction.getAccount().get()))
 			throw new IllegalArgumentException("The previous ballance account not equal this");
     	this.account = transaction.getAccount().get();
 		this.transaction = transaction;
 		this.fromDate = fromDate;
-		this.toDate = toDate;
+		this.setToDate(toDate);
 		if (previousBalance == null
 				&& (transaction.getOperation() == OPERATION.INCREASE || transaction.getValue() == 0L))
 			this.balance = transaction.getValue();
-		else if (transaction.getOperation() == OPERATION.INCREASE)
-			this.balance = previousBalance.getballance() + transaction.getValue();
+		else if (transaction.getOperation() == OPERATION.INCREASE) {
+			this.balance = previousBalance.getBallance() + transaction.getValue();
+			previousBalance.setToDate(fromDate);
+		}
 		else if(previousBalance != null
 				&& transaction.getOperation() == OPERATION.REDUCE
-				&& previousBalance.getballance() - transaction.getValue() >= 0L)
-			this.balance = previousBalance.getballance() - transaction.getValue();
-		else 
-			throw new IllegalArgumentException("The ballance can not be less than zero");			
+				&& previousBalance.getBallance() - transaction.getValue() >= 0L) {
+			this.balance = previousBalance.getBallance() - transaction.getValue();
+			previousBalance.setToDate(new Date(fromDate.getTime() - 1L));
+		} else {
+			throw new IllegalArgumentException("The ballance can not be less than zero");	
+		}
 	}
     
-    public Balance(Transaction transaction, Balance previousBallance, Date fromDate) throws IllegalArgumentException {
-		this(transaction, previousBallance, fromDate, new Date(Long.MAX_VALUE));
+    public Balance(Transaction transaction, Balance previousBalance, Date fromDate) throws IllegalArgumentException, ParseException {
+		this(transaction, previousBalance, fromDate, null);
 	}
 
 
@@ -89,7 +96,7 @@ public class Balance {
         return Optional.of(transaction);
     }
     
-    public long getballance() { 
+    public long getBallance() { 
         return balance;
     }    
     
@@ -103,9 +110,9 @@ public class Balance {
 		return toDate;
 	}
 	
-	 public void setToDate(Date toDate) {
+	 public void setToDate(Date toDate) throws ParseException {
 		if (toDate == null)
-			this.toDate = new Date(Long.MAX_VALUE);
+			this.toDate = new SimpleDateFormat("yyyy-MM-dd").parse("2999-12-31");
 		else
 			this.toDate = toDate;
 	}

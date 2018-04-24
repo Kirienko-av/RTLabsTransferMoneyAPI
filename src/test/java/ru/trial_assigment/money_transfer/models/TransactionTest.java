@@ -8,10 +8,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.trial_assigment.money_transfer.models.Transaction.OPERATION;
 import ru.trial_assigment.money_transfer.models.Transaction.STATUS;
 
-import static junit.framework.TestCase.fail;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
