@@ -119,6 +119,7 @@ public class Balance {
         }
 
         public Builder setFromDate(Date fromDate) {
+        	//TO-DO Реализовать возможность вклиниваннияю
             if (fromDate == null)
                 return this;
             if (fromDate.getTime() > Balance.MAX_DATE.getTime())
@@ -135,7 +136,7 @@ public class Balance {
         }
 
         public Builder setPreviousBalance(Balance previousBalance){
-            if (fromDate == null)
+            if (previousBalance == null)
                 return this;
             if (!previousBalance.getAccount().get().equals(Balance.this.transaction.getAccount().get()))
                 throw new IllegalArgumentException("The previous ballance account not equal this");
