@@ -6,12 +6,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.trial_assigment.money_transfer.models.Account;
 import ru.trial_assigment.money_transfer.models.Balance;
 import ru.trial_assigment.money_transfer.models.Transaction;
 
-import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -19,6 +19,7 @@ import java.util.Date;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BalacnesReposytoryTest {
     @Autowired
     BalancesReposytory balancesReposytory;

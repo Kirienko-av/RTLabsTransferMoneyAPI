@@ -3,8 +3,6 @@ package ru.trial_assigment.money_transfer.models;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import ru.trial_assigment.money_transfer.models.Transaction.OPERATION;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
